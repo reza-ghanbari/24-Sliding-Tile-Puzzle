@@ -15,19 +15,21 @@
 class Heuristic {
 private:
     std::vector<Short> tiles;
-    std::unordered_map<Long, Short> PDB;
+    std::unordered_map<Int, Short> PDB;
     NeighborCache neighborCache;
 public:
     Heuristic(std::vector<Short> tiles): tiles(std::move(tiles)) {
         this->neighborCache = NeighborCache();
         this->generatePDB();
-        this->saveToFile("pdb.txt");
     };
     void saveToFile(const std::string& fileName);
     void readFromFile(const std::string& filename);
-    Long getRank(const State& state) const;
+    Int getRank(const State& state) const;
+    Int getRank(std::vector<Short>& dual) const;
     Short getHeuristic(const State& state) const;
     void generatePDB();
+
+    std::vector<Short> getGoal() const;
 };
 
 

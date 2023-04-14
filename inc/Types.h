@@ -9,5 +9,6 @@
 
 typedef uint8_t Short;
 typedef uint64_t Long;
+typedef uint32_t Int;
 
 #endif //CODE_TYPES_H

@@ -6,25 +6,30 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include "../inc/Heuristic.h"
 
-Long Heuristic::getRank(const State &state) const {
-    std::vector<Short> selectedState;
+Int Heuristic::getRank(const State &state) const {
     std::vector<Short> dual = state.getDual();
-    Long rank = 0;
-    for (int i = 0; i < PDB_STATE_SIZE; ++i) {
+    Int rank = 0;
+    for (Short tile: tiles) {
         rank <<= 5;
-        rank |= dual[tiles[i]];
+        rank |= dual[tile];
+    }
+    return rank;
+}
+
+Int Heuristic::getRank(std::vector<Short>& dual) const {
+    Int rank = 0;
+    for (short tile: tiles) {
+        rank <<= 5;
+        rank |= dual[tile];
     }
     return rank;
 }
 
 void Heuristic::generatePDB() {
-    std::vector<Short> goalState = {0, 0, 2, 3, 4,
-                                    0, 0, 7, 8, 9,
-                                    0, 0, 0, 0, 0,
-                                    0, 0, 0, 0, 0,
-                                    0, 0, 0, 0, 0};
+    std::vector<Short> goalState = getGoal();
     std::vector<Short> goalDual = goalState;
     auto* goal = new State(goalState, goalDual, 0);
 // implement a BFS to generate the PDB
@@ -37,30 +42,37 @@ void Heuristic::generatePDB() {
         Short currentRank = PDB[getRank(*current)];
         std::vector<Short> state = current->getState();
         std::vector<Short> dual = current->getDual();
-        for (int i = 0; i < CAPACITY; ++i) {
-            if (state[i] == 0) {
-                for (Short neighbor: neighborCache.getNeighbors(i)) {
-                    if (state[neighbor] == 0) {
-                        continue;
-                    }
-                    auto newState = state;
-                    auto newDual = dual;
-                    std::swap(newState[i], newState[neighbor]);
-                    std::swap(newDual[newState[i]], newDual[newState[neighbor]]);
-                    State* next = new State(newState, newDual);
-                    Long nextRank = getRank(*next);
-                    if (PDB.find(nextRank) == PDB.end()) {
-                        PDB[nextRank] = currentRank + 1;
-                        queue.push(next);
-                    }
-                    else {
-                        delete next;
-                    }
+        for (Short tileNumber : tiles) {
+            Short tile = dual[tileNumber];
+            for (Short neighbor: neighborCache.getNeighbors(tile)) {
+                if (state[neighbor] != 0) {
+                    continue;
+                }
+                auto newState = state;
+                auto newDual = dual;
+                std::swap(newState[tile], newState[neighbor]);
+                newDual[tileNumber] = neighbor;
+                Int nextRank = getRank(newDual);
+                if (PDB.find(nextRank) == PDB.end()) {
+                    auto* next = new State(newState, newDual);
+                    PDB[nextRank] = currentRank + 1;
+                    queue.push(next);
                 }
             }
         }
         delete current;
     }
+}
+
+std::vector<Short> Heuristic::getGoal() const {
+    std::vector<Short> goalState;
+    for (int i = 0; i < CAPACITY; ++i) {
+        if (std::count(tiles.begin(), tiles.end(), i) > 0)
+            goalState.push_back(i);
+        else
+            goalState.push_back(0);
+    }
+    return goalState;
 }
 
 void Heuristic::saveToFile(const std::string& fileName) {
