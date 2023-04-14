@@ -3,11 +3,11 @@
 #include "inc/NeighborCache.h"
 #include "inc/Heuristic.h"
 
-Heuristic* getHeuristic(std::vector<Short>& tiles, const std::string& filename) {
+Heuristic* getHeuristic(std::vector<Short>& tiles, NeighborCache* neighborCache, const std::string& filename) {
     if (READ_PDB) {
         std::cout << "Starting loading PDB..." << std::endl;
         auto start = std::chrono::steady_clock::now();
-        Heuristic* heuristic = new Heuristic(tiles, filename);
+        auto* heuristic = new Heuristic(tiles, neighborCache, filename);
         auto end = std::chrono::steady_clock::now();
         std::cout << "Time difference for reading = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << "[s]" << std::endl;
         return heuristic;
@@ -15,7 +15,7 @@ Heuristic* getHeuristic(std::vector<Short>& tiles, const std::string& filename) 
     else {
         std::cout << "Starting PDB creation..." << std::endl;
         auto start = std::chrono::steady_clock::now();
-        Heuristic* heuristic = new Heuristic(tiles);
+        auto* heuristic = new Heuristic(tiles, neighborCache);
         auto end = std::chrono::steady_clock::now();
         std::cout << "Time difference for creating = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << "[s]" << std::endl;
         return heuristic;
@@ -25,8 +25,9 @@ Heuristic* getHeuristic(std::vector<Short>& tiles, const std::string& filename) 
 int main() {
     std::vector<Short> regularTiles = {2, 3, 4, 7, 8, 9};
     std::vector<Short> irregularTiles = {1, 5, 6, 10, 11, 12};
-    auto* regularHeuristic = getHeuristic(regularTiles, "pdb-regular.txt");
-    auto* irregularHeuristic = getHeuristic(irregularTiles, "pdb-regular.txt");
+    NeighborCache* neighborCache = new NeighborCache();
+    auto* regularHeuristic = getHeuristic(regularTiles, neighborCache, "pdb-regular.txt");
+    auto* irregularHeuristic = getHeuristic(irregularTiles, neighborCache, "pdb-regular.txt");
 
     if (WRITE_PDB) {
         regularHeuristic->saveToFile("pdb-regular.txt");

@@ -44,7 +44,7 @@ void Heuristic::generatePDB() {
         std::vector<Short> dual = current->getDual();
         for (Short tileNumber : tiles) {
             Short tile = dual[tileNumber];
-            for (Short neighbor: neighborCache.getNeighbors(tile)) {
+            for (Short neighbor: neighborCache->getNeighbors(tile)) {
                 if (state[neighbor] != 0) {
                     continue;
                 }
