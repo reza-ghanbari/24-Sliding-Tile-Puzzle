@@ -48,6 +48,7 @@ void Heuristic::generatePDB() {
                 if (state[neighbor] != 0) {
                     continue;
                 }
+//                std::cout << "tile: " << unsigned(tile) << " neighbor: " << unsigned(neighbor) << std::endl;
                 auto newState = state;
                 auto newDual = dual;
                 std::swap(newState[tile], newState[neighbor]);
@@ -57,10 +58,13 @@ void Heuristic::generatePDB() {
                     auto* next = new State(newState, newDual);
                     PDB[nextRank] = currentRank + 1;
                     queue.push(next);
+                } else {
+                    PDB[nextRank] = std::max<Short>(PDB[nextRank], currentRank + 1);
                 }
             }
         }
         delete current;
+//        break;
     }
 }
 
@@ -92,8 +96,8 @@ void Heuristic::readFromFile(const std::string& filename) {
     }
     std::string line;
     while (std::getline(file, line)) {
-        uint64_t key;
-        uint8_t value;
+        Int key;
+        Short value;
         size_t spacePos = line.find(' ');
         if (spacePos != std::string::npos) {
             key = std::stoull(line.substr(0, spacePos));

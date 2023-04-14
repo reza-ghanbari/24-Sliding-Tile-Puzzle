@@ -22,6 +22,10 @@ public:
         this->neighborCache = NeighborCache();
         this->generatePDB();
     };
+    Heuristic(std::vector<Short> tiles, const std::string& filename): tiles(std::move(tiles)) {
+        this->neighborCache = NeighborCache();
+        this->readFromFile(filename);
+    };
     void saveToFile(const std::string& fileName);
     void readFromFile(const std::string& filename);
     Int getRank(const State& state) const;
