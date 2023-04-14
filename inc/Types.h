@@ -8,5 +8,6 @@
 #include <cstdint>
 
 typedef uint8_t Short;
+typedef uint64_t Long;
 
 #endif //CODE_TYPES_H

@@ -3,7 +3,3 @@
 //
 
 #include "../inc/State.h"
-
-std::vector<Short> State::getBlankNeighbors() const {
-    return std::vector<Short>();
-}
