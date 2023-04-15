@@ -87,7 +87,7 @@ Short Solver::iterate(State *state, Int limit, Int gCost, Short previousBlank, s
             }
             continue;
         }
-        auto result = iterate(state, limit, gCost + 1, neighbor, path);
+        auto result = iterate(state, limit, gCost + 1, currentBlank, path);
         if (result == 0) {
             return 0;
         }
@@ -101,6 +101,8 @@ Short Solver::iterate(State *state, Int limit, Int gCost, Short previousBlank, s
 }
 
 std::vector<Short> Solver::solve(State* state) {
+    this->expandedNodes = 0;
+    this->generatedNodes = 0;
     Short limit = calculateHeuristic(*state);
     std::vector<Short> path = {state->getBlank()};
     while (true) {
