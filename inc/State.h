@@ -21,8 +21,8 @@ public:
     State(std::vector<Short> state, std::vector<Short> dual): state(std::move(state)), dual(std::move(dual)) {
         this->blank = 0;
     };
-    const std::vector<Short>& getState() const { return state; };
-    const std::vector<Short> getDual() const { return dual; };
+    std::vector<Short> getState() { return state; };
+    std::vector<Short> getDual() { return dual; };
     void swap(Short to);
     [[nodiscard]] Short getBlank() const { return blank; };
 

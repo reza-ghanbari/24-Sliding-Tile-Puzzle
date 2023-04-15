@@ -49,8 +49,6 @@ public:
     Short getHeuristicOfSelectedDuals(std::vector<Short> &dual);
 
     Short getHeuristic(std::vector<Short> &dual);
-
-    Int getRank(State *state) const;
 };
 
 
