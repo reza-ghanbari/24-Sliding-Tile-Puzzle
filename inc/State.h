@@ -23,8 +23,12 @@ public:
     };
     const std::vector<Short>& getState() const { return state; };
     const std::vector<Short> getDual() const { return dual; };
+    void swap(Short to);
     [[nodiscard]] Short getBlank() const { return blank; };
 
+    bool isGoal() const;
+
+    void printState() const;
 };
 
 
