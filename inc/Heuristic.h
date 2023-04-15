@@ -32,15 +32,19 @@ public:
 
     void readFromFile(const std::string &filename);
 
-    Int getRank(const State &state) const;
-
     Int getRank(std::vector<Short> &dual) const;
-
-    Short getHeuristic(const State &state) const;
 
     void generatePDB();
 
-    std::vector<Short> getGoal() const;
+    State* getGoal() const;
+
+    Int getRankOfSelectedDuals(std::vector<Short> &dual) const;
+
+    Short getHeuristicOfSelectedDuals(std::vector<Short> &dual);
+
+    Short getHeuristic(std::vector<Short> &dual);
+
+    Int getRank(State *state) const;
 };
 
 

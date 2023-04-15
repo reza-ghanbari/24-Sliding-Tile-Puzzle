@@ -9,12 +9,11 @@
 #include <algorithm>
 #include "../inc/Heuristic.h"
 
-Int Heuristic::getRank(const State &state) const {
-    std::vector<Short> dual = state.getDual();
+Int Heuristic::getRankOfSelectedDuals(std::vector<Short>& dual) const {
     Int rank = 0;
-    for (Short tile: tiles) {
+    for (Short item: dual) {
         rank <<= 5;
-        rank |= dual[tile];
+        rank |= item;
     }
     return rank;
 }
@@ -28,27 +27,33 @@ Int Heuristic::getRank(std::vector<Short>& dual) const {
     return rank;
 }
 
+Int Heuristic::getRank(State* state) const {
+    auto dual = state->getDual();
+    Int rank = 0;
+    for (short tile: tiles) {
+        rank <<= 5;
+        rank |= dual[tile];
+    }
+    return rank;
+}
+
 void Heuristic::generatePDB() {
-    std::vector<Short> goalState = getGoal();
-    std::vector<Short> goalDual = goalState;
-    auto* goal = new State(goalState, goalDual, 0);
-// implement a BFS to generate the PDB
+    State* goal = getGoal();
     std::queue<State*> queue;
     queue.push(goal);
-    PDB[getRank(*goal)] = 0;
+    PDB[getRank(goal)] = 0;
     while (!queue.empty()) {
         State* current = queue.front();
         queue.pop();
-        Short currentRank = PDB[getRank(*current)];
         std::vector<Short> state = current->getState();
         std::vector<Short> dual = current->getDual();
+        Short currentRank = PDB[getRank(dual)];
         for (Short tileNumber : tiles) {
             Short tile = dual[tileNumber];
             for (Short neighbor: neighborCache->getNeighbors(tile)) {
                 if (state[neighbor] != 0) {
                     continue;
                 }
-//                std::cout << "tile: " << unsigned(tile) << " neighbor: " << unsigned(neighbor) << std::endl;
                 auto newState = state;
                 auto newDual = dual;
                 std::swap(newState[tile], newState[neighbor]);
@@ -58,17 +63,14 @@ void Heuristic::generatePDB() {
                     auto* next = new State(newState, newDual);
                     PDB[nextRank] = currentRank + 1;
                     queue.push(next);
-                } else {
-                    PDB[nextRank] = std::max<Short>(PDB[nextRank], currentRank + 1);
                 }
             }
         }
         delete current;
-//        break;
     }
 }
 
-std::vector<Short> Heuristic::getGoal() const {
+State* Heuristic::getGoal() const {
     std::vector<Short> goalState;
     for (int i = 0; i < CAPACITY; ++i) {
         if (std::count(tiles.begin(), tiles.end(), i) > 0)
@@ -76,7 +78,8 @@ std::vector<Short> Heuristic::getGoal() const {
         else
             goalState.push_back(0);
     }
-    return goalState;
+    std::vector<Short> goalDual = goalState;
+    return new State(goalState, goalDual, 0);
 }
 
 void Heuristic::saveToFile(const std::string& fileName) {
@@ -109,4 +112,12 @@ void Heuristic::readFromFile(const std::string& filename) {
         }
     }
     file.close();
+}
+
+Short Heuristic::getHeuristic(std::vector<Short>& dual) {
+    return PDB[getRank(dual)];
+}
+
+Short Heuristic::getHeuristicOfSelectedDuals(std::vector<Short>& dual) {
+    return PDB[getRankOfSelectedDuals(dual)];
 }

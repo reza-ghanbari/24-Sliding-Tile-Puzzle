@@ -9,6 +9,7 @@
 
 const Short BLANK = 0;
 const Short SIZE = 5;
+const Short ZERO_BASED_SIZE = SIZE - 1;
 const Short CAPACITY = 25;
 const Short PDB_STATE_SIZE = 6;
 

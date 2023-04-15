@@ -1,7 +1,9 @@
 #include <iostream>
 #include <chrono>
+#include <algorithm>
 #include "inc/NeighborCache.h"
 #include "inc/Heuristic.h"
+#include "inc/Solver.h"
 
 Heuristic* getHeuristic(std::vector<Short>& tiles, NeighborCache* neighborCache, const std::string& filename) {
     if (READ_PDB) {
@@ -22,17 +24,29 @@ Heuristic* getHeuristic(std::vector<Short>& tiles, NeighborCache* neighborCache,
     }
 }
 
+State* getRoot() {
+    std::vector<Short> state = {10, 3, 24, 12, 0, 7, 8, 11, 14, 21, 22, 23, 2, 1, 9, 17, 18, 6, 20, 4, 13, 15, 5, 19, 16};
+    std::vector<Short> dual;
+    for (Short i = 0; i < 25; i++) {
+        dual.push_back(std::find(state.begin(), state.end(), i) - state.begin());
+    }
+    return new State(state, dual, dual[0]);
+}
+
 int main() {
     std::vector<Short> regularTiles = {2, 3, 4, 7, 8, 9};
     std::vector<Short> irregularTiles = {1, 5, 6, 10, 11, 12};
-    NeighborCache* neighborCache = new NeighborCache();
+    auto* neighborCache = new NeighborCache();
     auto* regularHeuristic = getHeuristic(regularTiles, neighborCache, "pdb-regular.txt");
     auto* irregularHeuristic = getHeuristic(irregularTiles, neighborCache, "pdb-regular.txt");
-
     if (WRITE_PDB) {
         regularHeuristic->saveToFile("pdb-regular.txt");
         irregularHeuristic->saveToFile("pdb-irregular.txt");
     }
+    State* root = getRoot();
+    Solver* solver = new Solver(regularHeuristic, irregularHeuristic, neighborCache);
+    solver->calculateHeuristic(*root);
+    solver->solve(root);
 
     return 0;
 }

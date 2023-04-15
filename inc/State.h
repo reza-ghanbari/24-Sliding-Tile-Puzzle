@@ -22,7 +22,7 @@ public:
         this->blank = 0;
     };
     const std::vector<Short>& getState() const { return state; };
-    const std::vector<Short>& getDual() const { return dual; };
+    const std::vector<Short> getDual() const { return dual; };
     [[nodiscard]] Short getBlank() const { return blank; };
 
 };
