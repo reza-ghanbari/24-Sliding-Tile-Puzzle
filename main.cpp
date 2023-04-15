@@ -48,13 +48,17 @@ int main() {
     State* root = getRoot();
     auto* solver = new Solver(regularHeuristic, irregularHeuristic, neighborCache);
 //    std::cout << unsigned (solver->calculateHeuristic(*root)) << std::endl;
-    auto start = std::chrono::steady_clock::now();
-    std::vector<Short> path = solver->solve(root);
-    auto end = std::chrono::steady_clock::now();
-    std::cout << "Time difference for solving = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << "[s]" << std::endl;
-    std::cout << "Path: ";
-    for (auto& step: path) {
-        std::cout << unsigned(step) << " ";
+    if (SOLVE) {
+        auto start = std::chrono::steady_clock::now();
+        std::vector<Short> path = solver->solve(root);
+        auto end = std::chrono::steady_clock::now();
+        std::cout << "Time difference for solving = "
+                  << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << "[s]"
+                  << std::endl;
+        std::cout << "Path: ";
+        for (auto &step: path) {
+            std::cout << unsigned(step) << " ";
+        }
     }
     return 0;
 }
