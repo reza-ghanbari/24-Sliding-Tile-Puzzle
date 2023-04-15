@@ -15,92 +15,94 @@ Short Solver::getHeuristicOfMirroredTable(std::vector<Short>& dual) {
     Short heuristicValue = 0;
     std::vector<Short> convertedDuals;
     std::vector<Short> irregularTiles = {5, 1, 6, 2, 7, 12};
-    std::cout << "start converting irregular tiles mirrored" << std::endl;
     for (auto tile: irregularTiles) {
         auto dualCoord = getCoordinateFromIndex(dual[tile]);
-        std::cout << "dual coord: <" << unsigned(dualCoord.first) << ", " << unsigned(dualCoord.second) << "> tile:" << unsigned(tile)
-            << " dual: " << unsigned(dual[tile]) << " converted to <" << unsigned(dualCoord.second) << "," << unsigned(dualCoord.first)
-            << "> or tile " << unsigned(getIndexFromCoordinate(dualCoord.second, dualCoord.first))
-            << " with dual " << unsigned(dual[getIndexFromCoordinate(dualCoord.second, dualCoord.first)]) << std::endl;
-
         convertedDuals.push_back(dual[getIndexFromCoordinate(dualCoord.second, dualCoord.first)]);
     }
     heuristicValue += irregularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
-    std::cout << "irregular heuristic mirrored: " << unsigned(heuristicValue) << std::endl;
     convertedDuals.clear();
-    std::cout << "start converting regular tiles down left mirror" << std::endl;
     std::vector<Short> downLeftTiles = {10, 15, 20, 11, 16, 21};
     for (auto &tile: downLeftTiles) {
         auto dualCoord = getCoordinateFromIndex(dual[tile]);
-        std::cout << "dual coord: <" << unsigned(dualCoord.first) << ", " << unsigned(dualCoord.second) << "> tile:" << unsigned(tile)
-                  << " dual: " << unsigned(dual[tile]) << " converted to <" << unsigned(dualCoord.second) << "," << unsigned(dualCoord.first)
-                  << "> or " << unsigned(dual[getIndexFromCoordinate(dualCoord.second, dualCoord.first)]) << std::endl;
         convertedDuals.push_back(dual[getIndexFromCoordinate(dualCoord.second, dualCoord.first)]);
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
-    std::cout << "regular heuristic down left mirrored: " << unsigned(heuristicValue) << std::endl;
     convertedDuals.clear();
-    std::cout << "start converting regular tiles down right mirror" << std::endl;
     std::vector<Short> downRightTiles = {22, 23, 24, 17, 18, 19};
     for (auto &tile: downRightTiles) {
         auto dualCoord = getCoordinateFromIndex(dual[tile]);
-        std::cout << "dual coord: <" << unsigned(dualCoord.first) << ", " << unsigned(dualCoord.second) << "> tile:" << unsigned(tile)
-                  << " dual: " << unsigned(dual[tile]) << " converted to <" << unsigned(dualCoord.first) << "," << unsigned(ZERO_BASED_SIZE - dualCoord.second)
-                  << "> or " << unsigned(dual[getIndexFromCoordinate(dualCoord.first, ZERO_BASED_SIZE - dualCoord.second)]) << std::endl;
         convertedDuals.push_back(dual[getIndexFromCoordinate(dualCoord.first, ZERO_BASED_SIZE - dualCoord.second)]);
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
-    std::cout << "regular heuristic down right mirrored: " << unsigned(heuristicValue) << std::endl;
     convertedDuals.clear();
-    std::cout << "start converting regular tiles top right mirror" << std::endl;
     std::vector<Short> topRightTiles = {14, 9, 4, 13, 8, 3};
     for (auto &tile: topRightTiles) {
         auto dualCoord = getCoordinateFromIndex(dual[tile]);
-        std::cout << "dual coord: <" << unsigned(dualCoord.first) << ", " << unsigned(dualCoord.second) << "> tile:" << unsigned(tile)
-                  << " dual: " << unsigned(dual[tile]) << " converted to <" << unsigned(dualCoord.second) << "," << unsigned(ZERO_BASED_SIZE - dualCoord.first)
-                  << "> or " << unsigned(dual[getIndexFromCoordinate(ZERO_BASED_SIZE - dualCoord.second, ZERO_BASED_SIZE - dualCoord.first)]) << std::endl;
         convertedDuals.push_back(dual[getIndexFromCoordinate(ZERO_BASED_SIZE - dualCoord.second, ZERO_BASED_SIZE - dualCoord.first)]);
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
-    std::cout << "regular heuristic top right mirrored: " << unsigned(heuristicValue) << std::endl;
     convertedDuals.clear();
     return heuristicValue;
 }
 
 Short Solver::getHeuristicOfNormalTable(std::vector<Short> &dual) {
     Short heuristicValue = regularHeuristic->getHeuristic(dual);
-    std::cout << "regular heuristic top left: " << unsigned(heuristicValue) << std::endl;
     heuristicValue += irregularHeuristic->getHeuristic(dual);
-    std::cout << "irregular heuristic: " << unsigned(heuristicValue) << std::endl;
     std::vector<Short> convertedDuals;
-    std::cout << "start converting regular tiles down right" << std::endl;
     std::vector<Short> downRightTiles = { 14, 19, 24, 13, 18, 23};
     for (auto &tile: downRightTiles) {
         auto dualCoord = getCoordinateFromIndex(dual[tile]);
-        std::cout << "dual coord: <" << unsigned(dualCoord.first) << ", " << unsigned(dualCoord.second) << "> tile:" << unsigned(tile)
-                  << " dual: " << unsigned(dual[tile]) << " converted to <" << unsigned(dualCoord.second) << "," << unsigned(ZERO_BASED_SIZE - dualCoord.first)
-                  << "> or " << unsigned(dual[getIndexFromCoordinate(dualCoord.second, ZERO_BASED_SIZE - dualCoord.first)]) << std::endl;
         convertedDuals.push_back(dual[getIndexFromCoordinate(dualCoord.second, ZERO_BASED_SIZE - dualCoord.first)]);
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
-    std::cout << "regular heuristic down right: " << unsigned(heuristicValue) << std::endl;
     convertedDuals.clear();
-    std::cout << "start converting regular tiles down left" << std::endl;
     std::vector<Short> downLeftTiles = {22, 21, 20, 17, 16, 15};
     for (auto &tile: downLeftTiles) {
         auto dualCoord = getCoordinateFromIndex(dual[tile]);
-        std::cout << "dual coord: <" << unsigned(dualCoord.first) << ", " << unsigned(dualCoord.second) << "> tile:" << unsigned(tile)
-                  << " dual: " << unsigned(dual[tile]) << " converted to <" << unsigned(ZERO_BASED_SIZE - dualCoord.first) << "," << unsigned(ZERO_BASED_SIZE - dualCoord.second)
-                  << "> or " << unsigned(dual[getIndexFromCoordinate(ZERO_BASED_SIZE - dualCoord.first, ZERO_BASED_SIZE - dualCoord.second)]) << std::endl;
         convertedDuals.push_back(dual[getIndexFromCoordinate(ZERO_BASED_SIZE - dualCoord.first, ZERO_BASED_SIZE - dualCoord.second)]);
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
-    std::cout << "regular heuristic down left: " << unsigned(heuristicValue) << std::endl;
     return heuristicValue;
 }
 
+Short Solver::iterate(State *state, Int limit, Int gCost, Short previousBlank, std::vector<Short>& path) {
+    Short hCost = calculateHeuristic(*state);
+    Short fCost = hCost + gCost;
+    if (fCost > limit)
+        return fCost;
+    if (state->isGoal())
+        return 0;
+    Short min = MAX_INT;
+    Short currentBlank = state->getBlank();
+    for (auto neighbor: neighborCache->getNeighbors(currentBlank)) {
+        if (neighbor == previousBlank) {
+            continue;
+        }
+        path.push_back(neighbor);
+        state->swap(neighbor);
+        auto result = iterate(state, limit, gCost + 1, neighbor, path);
+        if (result == 0) {
+            return 0;
+        }
+        if (result < min) {
+            min = result;
+        }
+        path.pop_back();
+        state->swap(currentBlank);
+    }
+    return min;
+}
+
 std::vector<Short> Solver::solve(State* state) {
-    return std::vector<Short>();
+    Short limit = calculateHeuristic(*state);
+    std::vector<Short> path = {state->getBlank()};
+    while (true) {
+        Short result = iterate(state, limit, 0, state->getBlank(), path);
+        if (result == 0) {
+            return path;
+        }
+        limit = result;
+    }
 }
 
 inline Short Solver::getIndexFromCoordinate(Short x, Short y) const {

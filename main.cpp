@@ -46,7 +46,10 @@ int main() {
     State* root = getRoot();
     Solver* solver = new Solver(regularHeuristic, irregularHeuristic, neighborCache);
     solver->calculateHeuristic(*root);
-    solver->solve(root);
-
+    std::vector<Short> path = solver->solve(root);
+    std::cout << "Path: ";
+    for (auto& step: path) {
+        std::cout << unsigned(step) << " ";
+    }
     return 0;
 }
