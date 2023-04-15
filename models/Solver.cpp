@@ -66,20 +66,31 @@ Short Solver::getHeuristicOfNormalTable(std::vector<Short> &dual) {
 }
 
 Short Solver::iterate(State *state, Int limit, Int gCost, Short previousBlank, std::vector<Short>& path) {
-    Short hCost = calculateHeuristic(*state);
-    Short fCost = hCost + gCost;
-    if (fCost > limit)
-        return fCost;
-    if (state->isGoal())
-        return 0;
+    this->expandedNodes++;
+    bool goalIsNotChecked = true;
     Short min = MAX_INT;
     Short currentBlank = state->getBlank();
     for (auto neighbor: neighborCache->getNeighbors(currentBlank)) {
         if (neighbor == previousBlank) {
             continue;
         }
+        this->generatedNodes++;
         path.push_back(neighbor);
         state->swap(neighbor);
+        Short fCost = gCost + calculateHeuristic(*state);
+        if (fCost > limit) {
+            state->swap(currentBlank);
+            path.pop_back();
+            if (goalIsNotChecked) {
+                if (state->isGoal()) {
+                    return 0;
+                } else goalIsNotChecked = false;
+            }
+            if (fCost < min) {
+                min = fCost;
+            }
+            continue;
+        }
         auto result = iterate(state, limit, gCost + 1, neighbor, path);
         if (result == 0) {
             return 0;
@@ -87,8 +98,8 @@ Short Solver::iterate(State *state, Int limit, Int gCost, Short previousBlank, s
         if (result < min) {
             min = result;
         }
-        path.pop_back();
         state->swap(currentBlank);
+        path.pop_back();
     }
     return min;
 }
@@ -98,6 +109,7 @@ std::vector<Short> Solver::solve(State* state) {
     std::vector<Short> path = {state->getBlank()};
     while (true) {
         Short result = iterate(state, limit, 0, state->getBlank(), path);
+        std::cout << "Limit: " << unsigned(limit) << ", expanded: " << this->expandedNodes << ", generated: " << this->generatedNodes << std::endl;
         if (result == 0) {
             return path;
         }
