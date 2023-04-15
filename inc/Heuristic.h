@@ -32,6 +32,7 @@ public:
     Heuristic(std::vector<Short> tiles, NeighborCache *neighborCache, const std::string &filename)
         : tiles(std::move(tiles)), neighborCache(neighborCache) {
         InitializeRankingCalculationTables();
+        std::cout << "Reading PDB from file: " << filename << std::endl;
         this->readFromFile(filename);
     };
 

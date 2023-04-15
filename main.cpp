@@ -25,8 +25,8 @@ Heuristic* getHeuristic(std::vector<Short>& tiles, NeighborCache* neighborCache,
 }
 
 State* getRoot() {
-//    std::vector<Short> state = {10, 3, 24, 12, 0, 7, 8, 11, 14, 21, 22, 23, 2, 1, 9, 17, 18, 6, 20, 4, 13, 15, 5, 19, 16};
-    std::vector<Short> state = {2, 17, 4, 13, 7, 12, 10, 3, 0, 16, 21, 24, 8, 5, 18, 20, 15, 19, 14, 9, 22, 11, 6, 1, 23};
+    std::vector<Short> state = {10, 3, 24, 12, 0, 7, 8, 11, 14, 21, 22, 23, 2, 1, 9, 17, 18, 6, 20, 4, 13, 15, 5, 19, 16};
+//    std::vector<Short> state = {2, 17, 4, 13, 7, 12, 10, 3, 0, 16, 21, 24, 8, 5, 18, 20, 15, 19, 14, 9, 22, 11, 6, 1, 23};
     std::vector<Short> dual;
     for (Short i = 0; i < 25; i++) {
         dual.push_back(std::find(state.begin(), state.end(), i) - state.begin());
@@ -39,7 +39,7 @@ int main() {
     std::vector<Short> irregularTiles = {1, 5, 6, 10, 11, 12};
     auto* neighborCache = new NeighborCache();
     auto* regularHeuristic = getHeuristic(regularTiles, neighborCache, "pdb-regular.txt");
-    auto* irregularHeuristic = getHeuristic(irregularTiles, neighborCache, "pdb-regular.txt");
+    auto* irregularHeuristic = getHeuristic(irregularTiles, neighborCache, "pdb-irregular.txt");
     if (WRITE_PDB) {
         regularHeuristic->saveToFile("pdb-regular.txt");
         irregularHeuristic->saveToFile("pdb-irregular.txt");

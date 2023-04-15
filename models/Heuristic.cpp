@@ -110,15 +110,22 @@ void Heuristic::saveToFile(const std::string& fileName) {
 
 void Heuristic::readFromFile(const std::string& filename) {
     PDB.reserve(pick(CAPACITY, PDB_STATE_SIZE));
-    std::ifstream file("input.txt"); // open file for reading
+    std::ifstream file(filename);
     if (!file) {
         std::cerr << "Error opening file" << std::endl;
         return;
     }
-    unsigned int num;
+    Short num;
+//    std::vector<Int> distribution(36);
     while (file >> num) {
         PDB.push_back(num);
+//        distribution[num]++;
     }
+//    for (int i = 0; i < 36; ++i) {
+//        std::cout << unsigned (i) << ": " << unsigned (distribution[i]) << std::endl;
+//    }
+//    std::cout << "Total: " << PDB.size() << std::endl;
+
     file.close();
 }
 
