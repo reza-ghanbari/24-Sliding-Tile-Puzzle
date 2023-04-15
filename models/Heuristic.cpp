@@ -32,15 +32,14 @@ Int Heuristic::getRankOfSelectedDuals(std::vector<Short>& dual) const {
     std::bitset<CAPACITY> seen;
     lehmer[0] = dual[0];
     seen[CAPACITY - 1 - dual[0]] = true;
+    Int rank = lehmer[0] * this->picks[0];
     for (unsigned i = 1; i < PDB_STATE_SIZE; ++i)
     {
         seen[CAPACITY - 1 - dual[i]] = true;
         unsigned numOnes = this->onesCountLookup[seen.to_ulong() >> (CAPACITY - dual[i])];
         lehmer[i] = dual[i] - numOnes;
-    }
-    Int rank = 0;
-    for (size_t i = 0; i < PDB_STATE_SIZE; ++i)
         rank += lehmer[i] * this->picks[i];
+    }
     return rank;
 }
 
