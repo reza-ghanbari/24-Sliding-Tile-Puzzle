@@ -52,11 +52,6 @@ Int Heuristic::getRank(std::vector<Short>& dual) const {
     return getRankOfSelectedDuals(selectedDuals);
 }
 
-Int Heuristic::getRank(State* state) const {
-    auto dual = state->getDual();
-    return getRank(dual);
-}
-
 void Heuristic::generatePDB() {
     PDB = std::vector<Short>(pick(CAPACITY, PDB_STATE_SIZE));
     std::vector<Short> goalState;
@@ -65,33 +60,35 @@ void Heuristic::generatePDB() {
         goalState.push_back((std::count(tiles.begin(), tiles.end(), i) > 0) ? i : 0);
     }
     std::vector<Short> goalDual = goalState;
+    Int goalRank = getRank(goalDual);
+    PDB[goalRank] = 0;
     auto* goal = new State(goalState, goalDual, 0);
     std::queue<State*> queue;
     queue.push(goal);
-    Int goalRank = getRank(goal);
-    PDB[goalRank] = 0;
     while (!queue.empty()) {
         State* current = queue.front();
         queue.pop();
-        std::vector<Short> state = current->getState();
-        std::vector<Short> dual = current->getDual();
-        Short currentRank = PDB[getRank(dual)];
+        std::vector<Short> state = std::move(current->getState());
+        std::vector<Short> dual = std::move(current->getDual());
+        Short currentH = PDB[getRank(dual)];
+        if (currentH == 3) break;
         for (Short tileNumber : tiles) {
             Short tile = dual[tileNumber];
             for (Short neighbor: neighborCache->getNeighbors(tile)) {
                 if (state[neighbor] != 0) {
                     continue;
                 }
-                auto newState = state;
-                auto newDual = dual;
-                std::swap(newState[tile], newState[neighbor]);
-                newDual[tileNumber] = neighbor;
-                Int nextRank = getRank(newDual);
+                dual[tileNumber] = neighbor;
+                Int nextRank = getRank(dual);
                 if (PDB[nextRank] == 0 && nextRank != goalRank) {
+                    auto newDual = dual;
+                    auto newState = state;
+                    std::swap(newState[tile], newState[neighbor]);
                     auto* next = new State(newState, newDual);
-                    PDB[nextRank] = currentRank + 1;
+                    PDB[nextRank] = currentH + 1;
                     queue.push(next);
                 }
+                dual[tileNumber] = tile;
             }
         }
         delete current;
