@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <bitset>
 #include "Types.h"
 #include "State.h"
 #include "Constants.h"
@@ -15,16 +16,22 @@
 class Heuristic {
 private:
     std::vector<Short> tiles;
-    std::unordered_map<Int, Short> PDB;
+    std::vector<Short> PDB;
     NeighborCache *neighborCache;
+    Int onesCountLookup[LARGEST_NUMBER];
+    Int picks[PDB_STATE_SIZE];
+    Int pick(Short n, Short k);
+    void InitializeRankingCalculationTables();
 public:
     Heuristic(std::vector<Short> tiles, NeighborCache *neighborCache)
         : tiles(std::move(tiles)), neighborCache(neighborCache) {
+        InitializeRankingCalculationTables();
         this->generatePDB();
-    };
+    }
 
     Heuristic(std::vector<Short> tiles, NeighborCache *neighborCache, const std::string &filename)
         : tiles(std::move(tiles)), neighborCache(neighborCache) {
+        InitializeRankingCalculationTables();
         this->readFromFile(filename);
     };
 
@@ -35,8 +42,6 @@ public:
     Int getRank(std::vector<Short> &dual) const;
 
     void generatePDB();
-
-    State* getGoal() const;
 
     Int getRankOfSelectedDuals(std::vector<Short> &dual) const;
 
