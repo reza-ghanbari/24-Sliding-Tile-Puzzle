@@ -115,7 +115,7 @@ void Heuristic::readFromFile(const std::string& filename) {
         std::cerr << "Error opening file" << std::endl;
         return;
     }
-    Short num;
+    unsigned int num;
 //    std::vector<Int> distribution(36);
     while (file >> num) {
         PDB.push_back(num);
@@ -125,7 +125,6 @@ void Heuristic::readFromFile(const std::string& filename) {
 //        std::cout << unsigned (i) << ": " << unsigned (distribution[i]) << std::endl;
 //    }
 //    std::cout << "Total: " << PDB.size() << std::endl;
-
     file.close();
 }
 

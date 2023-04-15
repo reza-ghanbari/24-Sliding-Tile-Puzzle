@@ -8,40 +8,40 @@
 
 Short Solver::calculateHeuristic(State &state) {
     auto dual = state.getDual();
-    return std::max(getHeuristicOfNormalTable(dual), getHeuristicOfMirroredTable(dual));
+    return std::max(getHeuristicOfNormalTable(dual), getHeuristicOfReflectedTable(dual));
 }
 
-Short Solver::getHeuristicOfMirroredTable(std::vector<Short>& dual) {
+Short Solver::getHeuristicOfReflectedTable(std::vector<Short>& dual) {
     Short heuristicValue = 0;
     std::vector<Short> convertedDuals;
+    convertedDuals.reserve(PDB_STATE_SIZE);
     std::vector<Short> irregularTiles = {5, 1, 6, 2, 7, 12};
     for (auto tile: irregularTiles) {
-        auto dualCoord = getCoordinateFromIndex(dual[tile]);
-        convertedDuals.push_back(dual[getIndexFromCoordinate(dualCoord.second, dualCoord.first)]);
+        Short dualTile = dual[tile];
+        convertedDuals.push_back(dual[SIZE * (dualTile % SIZE) + dualTile / SIZE]);
     }
     heuristicValue += irregularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
     convertedDuals.clear();
     std::vector<Short> downLeftTiles = {10, 15, 20, 11, 16, 21};
     for (auto &tile: downLeftTiles) {
-        auto dualCoord = getCoordinateFromIndex(dual[tile]);
-        convertedDuals.push_back(dual[getIndexFromCoordinate(dualCoord.second, dualCoord.first)]);
+        Short dualTile = dual[tile];
+        convertedDuals.push_back(dual[SIZE * (dualTile % SIZE) + dualTile / SIZE]);
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
     convertedDuals.clear();
     std::vector<Short> downRightTiles = {22, 23, 24, 17, 18, 19};
     for (auto &tile: downRightTiles) {
-        auto dualCoord = getCoordinateFromIndex(dual[tile]);
-        convertedDuals.push_back(dual[getIndexFromCoordinate(dualCoord.first, ZERO_BASED_SIZE - dualCoord.second)]);
+        Short dualTile = dual[tile];
+        convertedDuals.push_back(dual[dualTile % SIZE + SIZE * (ZERO_BASED_SIZE - (dualTile / SIZE))]);
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
     convertedDuals.clear();
     std::vector<Short> topRightTiles = {14, 9, 4, 13, 8, 3};
     for (auto &tile: topRightTiles) {
-        auto dualCoord = getCoordinateFromIndex(dual[tile]);
-        convertedDuals.push_back(dual[getIndexFromCoordinate(ZERO_BASED_SIZE - dualCoord.second, ZERO_BASED_SIZE - dualCoord.first)]);
+        Short dualTile = dual[tile];
+        convertedDuals.push_back(dual[(ZERO_BASED_SIZE - (dualTile / SIZE)) + SIZE * (ZERO_BASED_SIZE - (dualTile % SIZE))]);
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
-    convertedDuals.clear();
     return heuristicValue;
 }
 
@@ -51,15 +51,15 @@ Short Solver::getHeuristicOfNormalTable(std::vector<Short> &dual) {
     std::vector<Short> convertedDuals;
     std::vector<Short> downRightTiles = { 14, 19, 24, 13, 18, 23};
     for (auto &tile: downRightTiles) {
-        auto dualCoord = getCoordinateFromIndex(dual[tile]);
-        convertedDuals.push_back(dual[getIndexFromCoordinate(dualCoord.second, ZERO_BASED_SIZE - dualCoord.first)]);
+        Short& dualTile = dual[tile];
+        convertedDuals.push_back(dual[(dualTile / SIZE) + SIZE * (ZERO_BASED_SIZE - (dualTile % SIZE))]);
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
     convertedDuals.clear();
     std::vector<Short> downLeftTiles = {22, 21, 20, 17, 16, 15};
     for (auto &tile: downLeftTiles) {
-        auto dualCoord = getCoordinateFromIndex(dual[tile]);
-        convertedDuals.push_back(dual[getIndexFromCoordinate(ZERO_BASED_SIZE - dualCoord.first, ZERO_BASED_SIZE - dualCoord.second)]);
+        Short& dualTile = dual[tile];
+        convertedDuals.push_back(dual[(ZERO_BASED_SIZE - (dualTile % SIZE)) + SIZE * (ZERO_BASED_SIZE - (dualTile / SIZE))]);
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
     return heuristicValue;
@@ -115,12 +115,4 @@ std::vector<Short> Solver::solve(State* state) {
         }
         limit = result;
     }
-}
-
-inline Short Solver::getIndexFromCoordinate(Short x, Short y) const {
-    return x + y * SIZE;
-}
-
-inline std::pair<Short, Short> Solver::getCoordinateFromIndex(Short index) const {
-    return std::make_pair(index % SIZE, index / SIZE);
 }

@@ -15,10 +15,6 @@ private:
     Long expandedNodes = 0;
     Long generatedNodes = 0;
 
-    inline Short getIndexFromCoordinate(Short x, Short y) const;
-
-    inline std::pair<Short, Short> getCoordinateFromIndex(Short index) const;
-
 public:
 
     Solver(Heuristic *regularHeuristic, Heuristic *irregularHeuristic, NeighborCache *neighborCache)
@@ -31,7 +27,7 @@ public:
 
     Short getHeuristicOfNormalTable(std::vector<Short> &dual);
 
-    Short getHeuristicOfMirroredTable(std::vector<Short>& dual);
+    Short getHeuristicOfReflectedTable(std::vector<Short>& dual);
 
     Short iterate(State *state, Int limit, Int gCost, Short previousBlank, std::vector<Short> &path);
 };
