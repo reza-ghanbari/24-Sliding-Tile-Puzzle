@@ -71,7 +71,6 @@ void Heuristic::generatePDB() {
         std::vector<Short> state = std::move(current->getState());
         std::vector<Short> dual = std::move(current->getDual());
         Short currentH = PDB[getRank(dual)];
-        if (currentH == 3) break;
         for (Short tileNumber : tiles) {
             Short tile = dual[tileNumber];
             for (Short neighbor: neighborCache->getNeighbors(tile)) {

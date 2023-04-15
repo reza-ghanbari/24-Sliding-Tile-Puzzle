@@ -18,25 +18,25 @@ Short Solver::getHeuristicOfReflectedTable(std::vector<Short>& dual) {
     convertedDuals.reserve(PDB_STATE_SIZE);
     for (auto tile: reflectedDisjointTables[0]) {
         Short dualTile = dual[tile];
-        convertedDuals[i++] = dual[SIZE * (dualTile % SIZE) + dualTile / SIZE];
+        convertedDuals[i++] = SIZE * (dualTile % SIZE) + dualTile / SIZE;
     }
     heuristicValue += irregularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
     i = 0;
     for (auto &tile: reflectedDisjointTables[1]) {
         Short dualTile = dual[tile];
-        convertedDuals[i++] = dual[SIZE * (dualTile % SIZE) + dualTile / SIZE];
+        convertedDuals[i++] = SIZE * (dualTile % SIZE) + dualTile / SIZE;
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
     i = 0;
     for (auto &tile: reflectedDisjointTables[2]) {
         Short dualTile = dual[tile];
-        convertedDuals[i++] = dual[dualTile % SIZE + SIZE * (ZERO_BASED_SIZE - (dualTile / SIZE))];
+        convertedDuals[i++] = dualTile % SIZE + SIZE * (ZERO_BASED_SIZE - (dualTile / SIZE));
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
     i = 0;
     for (auto &tile: reflectedDisjointTables[3]) {
         Short dualTile = dual[tile];
-        convertedDuals[i++] = dual[(ZERO_BASED_SIZE - (dualTile / SIZE)) + SIZE * (ZERO_BASED_SIZE - (dualTile % SIZE))];
+        convertedDuals[i++] = (ZERO_BASED_SIZE - (dualTile / SIZE)) + SIZE * (ZERO_BASED_SIZE - (dualTile % SIZE));
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
     return heuristicValue;
@@ -48,14 +48,14 @@ Short Solver::getHeuristicOfNormalTable(std::vector<Short> &dual) {
     std::vector<Short> convertedDuals(6);
     int i = 0;
     for (auto &tile: normalDisjointTables[0]) {
-        Short& dualTile = dual[tile];
-        convertedDuals[i++] = dual[(dualTile / SIZE) + SIZE * (ZERO_BASED_SIZE - (dualTile % SIZE))];
+        Short dualTile = dual[tile];
+        convertedDuals[i++] = (dualTile / SIZE) + SIZE * (ZERO_BASED_SIZE - (dualTile % SIZE));
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
-    convertedDuals.clear();
+    i = 0;
     for (auto &tile: normalDisjointTables[1]) {
-        Short& dualTile = dual[tile];
-        convertedDuals[i++] = dual[(ZERO_BASED_SIZE - (dualTile % SIZE)) + SIZE * (ZERO_BASED_SIZE - (dualTile / SIZE))];
+        Short dualTile = dual[tile];
+        convertedDuals[i++] = (ZERO_BASED_SIZE - (dualTile % SIZE)) + SIZE * (ZERO_BASED_SIZE - (dualTile / SIZE));
     }
     heuristicValue += regularHeuristic->getHeuristicOfSelectedDuals(convertedDuals);
     return heuristicValue;
