@@ -90,13 +90,10 @@ void Heuristic::generatePDB() {
             break;
         }
         State* current = getStateOfRank(queue.front());
-        current->printState();
         queue.pop();
         std::vector<Short> state = std::move(current->getState());
         std::vector<Short> dual = std::move(current->getDual());
         Short currentH = PDB[getRank(dual)];
-        if (currentH == 4)
-            break;
         Short currentBlank = dual[0];
         for (Short neighbor: neighborCache->getNeighbors(currentBlank)) {
             dual[state[neighbor]] = currentBlank;
@@ -114,7 +111,6 @@ void Heuristic::generatePDB() {
                 if (PDB[nextRank] == 0 && nextRank != goalRank) {
                     PDB[nextRank] = currentH + 1;
                     ++count;
-//                    std::cout << count << " " << visited.size() << std::endl;
                 }
             }
             dual[state[neighbor]] = neighbor;
