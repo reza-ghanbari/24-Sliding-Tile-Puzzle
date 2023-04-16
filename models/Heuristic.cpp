@@ -86,35 +86,39 @@ void Heuristic::generatePDB() {
     while (count < PDB.size()) {
         if (queue.empty()) {
             std::cout << "Queue is empty" << std::endl;
+            std::cout << "Visited: " << visited.size() << std::endl;
             break;
         }
-        std::cout << "Queue Size: " << queue.size() << std::endl;
         State* current = getStateOfRank(queue.front());
+        current->printState();
         queue.pop();
         std::vector<Short> state = std::move(current->getState());
         std::vector<Short> dual = std::move(current->getDual());
         Short currentH = PDB[getRank(dual)];
-        Short currentBlank = current->getBlank();
-        std::cout << "Current Blank: " << unsigned (currentBlank) << std::endl;
+        if (currentH == 4)
+            break;
+        Short currentBlank = dual[0];
         for (Short neighbor: neighborCache->getNeighbors(currentBlank)) {
-            std::swap(dual[0], dual[state[neighbor]]);
+            dual[state[neighbor]] = currentBlank;
+            dual[0] = neighbor;
             Long newRank = getRankOfState(dual);
             if (visited.find(newRank) != visited.end()) {
-                std::swap(dual[0], dual[state[neighbor]]);
+                dual[state[neighbor]] = neighbor;
+                dual[0] = currentBlank;
                 continue;
             }
             visited.insert(newRank);
-            assert(newRank <= 1ULL<<35);
             queue.push(newRank);
             if (state[neighbor] != 0) {
                 Int nextRank = getRank(dual);
                 if (PDB[nextRank] == 0 && nextRank != goalRank) {
                     PDB[nextRank] = currentH + 1;
                     ++count;
-                    std::cout << count << " " << visited.size() << std::endl;
+//                    std::cout << count << " " << visited.size() << std::endl;
                 }
             }
-            std::swap(dual[0], dual[state[neighbor]]);
+            dual[state[neighbor]] = neighbor;
+            dual[0] = currentBlank;
         }
         delete current;
     }
