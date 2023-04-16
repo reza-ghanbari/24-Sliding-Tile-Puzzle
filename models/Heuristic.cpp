@@ -20,6 +20,8 @@ void Heuristic::InitializeRankingCalculationTables() {
     }
     for (unsigned i = 1; i < PDB_STATE_SIZE + 1; ++i)
         picks[i - 1] = pick(CAPACITY - i, PDB_STATE_SIZE - i);
+    for (unsigned i = 1; i < PDB_STATE_SIZE + 2; ++i)
+        visitedPicks[i - 1] = pick(CAPACITY - i, PDB_STATE_SIZE - i + 1);
 };
 
 Int Heuristic::getRankOfSelectedDuals(std::vector<Short>& dual) const {
@@ -34,6 +36,22 @@ Int Heuristic::getRankOfSelectedDuals(std::vector<Short>& dual) const {
         unsigned numOnes = this->onesCountLookup[seen.to_ulong() >> (CAPACITY - dual[i])];
         lehmer[i] = dual[i] - numOnes;
         rank += lehmer[i] * this->picks[i];
+    }
+    return rank;
+}
+
+Int Heuristic::getRankOfSelectedDualsWithBlank(std::vector<Short>& dual) const {
+    Short lehmer[PDB_STATE_SIZE];
+    std::bitset<CAPACITY> seen;
+    lehmer[0] = dual[0];
+    seen[CAPACITY - 1 - dual[0]] = true;
+    Int rank = lehmer[0] * this->visitedPicks[0];
+    for (unsigned i = 1; i < PDB_STATE_SIZE; ++i)
+    {
+        seen[CAPACITY - 1 - dual[i]] = true;
+        unsigned numOnes = this->onesCountLookup[seen.to_ulong() >> (CAPACITY - dual[i])];
+        lehmer[i] = dual[i] - numOnes;
+        rank += lehmer[i] * this->visitedPicks[i];
     }
     return rank;
 }
@@ -54,7 +72,7 @@ Int Heuristic::getRankWithBlank(std::vector<Short>& dual) const {
     for (short tile: tiles) {
         selectedDuals.push_back(dual[tile]);
     }
-    return getRankOfSelectedDuals(selectedDuals);
+    return getRankOfSelectedDualsWithBlank(selectedDuals);
 }
 
 Long Heuristic::getRankOfState(std::vector<Short>& dual) {
