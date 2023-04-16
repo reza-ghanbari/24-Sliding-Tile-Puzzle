@@ -41,12 +41,12 @@ Int Heuristic::getRankOfSelectedDuals(std::vector<Short>& dual) const {
 }
 
 Int Heuristic::getRankOfSelectedDualsWithBlank(std::vector<Short>& dual) const {
-    Short lehmer[PDB_STATE_SIZE];
+    Short lehmer[PDB_STATE_SIZE + 1];
     std::bitset<CAPACITY> seen;
     lehmer[0] = dual[0];
     seen[CAPACITY - 1 - dual[0]] = true;
     Int rank = lehmer[0] * this->visitedPicks[0];
-    for (unsigned i = 1; i < PDB_STATE_SIZE; ++i)
+    for (unsigned i = 1; i < PDB_STATE_SIZE + 1; ++i)
     {
         seen[CAPACITY - 1 - dual[i]] = true;
         unsigned numOnes = this->onesCountLookup[seen.to_ulong() >> (CAPACITY - dual[i])];
@@ -109,7 +109,7 @@ void Heuristic::generatePDB() {
     PDB[goalRank] = 0;
     Long goalStateRank = getRankOfState(goalDual);
     queue.push(goalStateRank);
-    visited.insert(goalStateRank);
+    visited.insert(getRankWithBlank(goalDual));
     Int count = 1;
     int creationPercentage = 1;
     int onePercentSize = int(PDB.size() / 100);
