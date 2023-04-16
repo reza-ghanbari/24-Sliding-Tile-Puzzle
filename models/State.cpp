@@ -32,13 +32,13 @@ void State::printState() const {
         }
         std::cout << std::endl;
     }
-    std::cout << "Dual:" << std::endl;
-    for (Short i = 0; i < SIZE; i++) {
-        for (Short j = 0; j < SIZE; j++) {
-            std::cout << std::setw(2) << unsigned(this->dual[i * SIZE + j]) << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "Blank: " << unsigned(this->blank) << std::endl;
+//    std::cout << "Dual:" << std::endl;
+//    for (Short i = 0; i < SIZE; i++) {
+//        for (Short j = 0; j < SIZE; j++) {
+//            std::cout << std::setw(2) << unsigned(this->dual[i * SIZE + j]) << " ";
+//        }
+//        std::cout << std::endl;
+//    }
+//    std::cout << "Blank: " << unsigned(this->blank) << std::endl;
     std::cout << "------------------" << std::endl;
 }

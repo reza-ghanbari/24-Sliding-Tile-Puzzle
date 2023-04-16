@@ -101,26 +101,26 @@ State* Heuristic::getStateOfRank(Long rank) {
 
 void Heuristic::generatePDB() {
     PDB = std::vector<Short>(pick(CAPACITY, PDB_STATE_SIZE));
+    visited = std::vector<bool>(pick(CAPACITY, PDB_STATE_SIZE + 1));
     std::vector<Short> goalState(CAPACITY);
     for (Short tile: tiles)
         goalState[tile] = tile;
     std::vector<Short> goalDual = goalState;
     Int goalRank = getRank(goalDual);
     PDB[goalRank] = 0;
-    Long goalStateRank = getRankOfState(goalDual);
-    queue.push(goalStateRank);
-    visited.insert(getRankWithBlank(goalDual));
+    queue.push_front(getRankOfState(goalDual));
+    visited[getRankWithBlank(goalDual)] = true;
     Int count = 1;
     int creationPercentage = 1;
     int onePercentSize = int(PDB.size() / 100);
     while (count < PDB.size()) {
-        if (queue.empty()) {
+        if (queue.empty()) [[unlikely]] {
             std::cout << "Queue is empty" << std::endl;
             std::cout << "Visited: " << visited.size() << std::endl;
             break;
         }
         State* current = getStateOfRank(queue.front());
-        queue.pop();
+        queue.pop_front();
         std::vector<Short> state = std::move(current->getState());
         std::vector<Short> dual = std::move(current->getDual());
         Short currentH = PDB[getRank(dual)];
@@ -129,14 +129,15 @@ void Heuristic::generatePDB() {
             dual[state[neighbor]] = currentBlank;
             dual[0] = neighbor;
             Int visitedRank = getRankWithBlank(dual);
-            if (visited.find(visitedRank) != visited.end()) {
+            if (visited[visitedRank]) {
                 dual[state[neighbor]] = neighbor;
                 dual[0] = currentBlank;
                 continue;
             }
-            visited.insert(visitedRank);
-            queue.push(getRankOfState(dual));
+            visited[visitedRank] = true;
+            Long rankOfChildState = getRankOfState(dual);
             if (state[neighbor] != 0) {
+                queue.push_back(rankOfChildState);
                 Int nextRank = getRank(dual);
                 if (PDB[nextRank] == 0 && nextRank != goalRank) {
                     PDB[nextRank] = currentH + 1;
@@ -146,6 +147,8 @@ void Heuristic::generatePDB() {
                         ++creationPercentage;
                     }
                 }
+            } else {
+                queue.push_front(rankOfChildState);
             }
             dual[state[neighbor]] = neighbor;
             dual[0] = currentBlank;

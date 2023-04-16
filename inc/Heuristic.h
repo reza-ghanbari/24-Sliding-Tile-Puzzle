@@ -28,8 +28,8 @@ private:
     Int onesCountLookup[LARGEST_NUMBER];
     Int picks[PDB_STATE_SIZE];
     Int visitedPicks[PDB_STATE_SIZE + 1];
-    std::queue<Long> queue;
-    std::unordered_set<Int> visited;
+    std::deque<Long> queue;
+    std::vector<bool> visited;
     Int pick(Short n, Short k);
     void InitializeRankingCalculationTables();
 public:
