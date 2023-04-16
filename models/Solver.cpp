@@ -76,8 +76,7 @@ Short Solver::iterate(State *state, Int limit, Short previousBlank, std::vector<
         state->swap(neighbor);
         Short childFCost = calculateHeuristic(*state) + path.size() - 1;
         if (childFCost > limit) {
-            if (childFCost < min)
-                min = childFCost;
+            min = std::min<Short>(min, childFCost);
             state->swap(currentBlank);
             path.pop_back();
             continue;
@@ -86,9 +85,7 @@ Short Solver::iterate(State *state, Int limit, Short previousBlank, std::vector<
         if (result == 0) {
             return 0;
         }
-        if (result < min) {
-            min = result;
-        }
+        min = std::min<Short>(min, result);
         state->swap(currentBlank);
         path.pop_back();
     }
