@@ -63,30 +63,20 @@ Short Solver::getHeuristicOfNormalTable(std::vector<Short> &dual) {
 
 Short Solver::iterate(State *state, Int limit, Int gCost, Short previousBlank, std::vector<Short>& path) {
     this->expandedNodes++;
-    bool goalIsNotChecked = true;
+    int currentHCost = calculateHeuristic(*state);
+    if (gCost + currentHCost > limit)
+        return gCost + currentHCost;
+    if (state->isGoal())
+        return 0;
     Short min = MAX_INT;
     Short currentBlank = state->getBlank();
     for (auto neighbor: neighborCache->getNeighbors(currentBlank)) {
+        this->generatedNodes++;
         if (neighbor == previousBlank) {
             continue;
         }
-        this->generatedNodes++;
         path.push_back(neighbor);
         state->swap(neighbor);
-        Short fCost = gCost + calculateHeuristic(*state);
-        if (fCost > limit) {
-            state->swap(currentBlank);
-            path.pop_back();
-            if (goalIsNotChecked) {
-                if (state->isGoal()) {
-                    return 0;
-                } else goalIsNotChecked = false;
-            }
-            if (fCost < min) {
-                min = fCost;
-            }
-            continue;
-        }
         auto result = iterate(state, limit, gCost + 1, currentBlank, path);
         if (result == 0) {
             return 0;

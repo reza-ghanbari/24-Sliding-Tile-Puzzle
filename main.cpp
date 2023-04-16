@@ -25,9 +25,8 @@ Heuristic* getHeuristic(std::vector<Short>& tiles, NeighborCache* neighborCache,
 }
 
 State* getRoot() {
-//    std::vector<Short> state = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
-//    std::vector<Short> state = {10, 3, 24, 12, 0, 7, 8, 11, 14, 21, 22, 23, 2, 1, 9, 17, 18, 6, 20, 4, 13, 15, 5, 19, 16};
-    std::vector<Short> state = {2, 17, 4, 13, 7, 12, 10, 3, 0, 16, 21, 24, 8, 5, 18, 20, 15, 19, 14, 9, 22, 11, 6, 1, 23};
+    std::vector<Short> state = {10, 3, 24, 12, 0, 7, 8, 11, 14, 21, 22, 23, 2, 1, 9, 17, 18, 6, 20, 4, 13, 15, 5, 19, 16};
+//    std::vector<Short> state = {2, 17, 4, 13, 7, 12, 10, 3, 0, 16, 21, 24, 8, 5, 18, 20, 15, 19, 14, 9, 22, 11, 6, 1, 23};
     std::vector<Short> dual;
     for (Short i = 0; i < 25; i++) {
         dual.push_back(std::find(state.begin(), state.end(), i) - state.begin());
@@ -49,11 +48,12 @@ int main() {
     }
     State* root = getRoot();
     auto* solver = new Solver(regularHeuristic, irregularHeuristic, neighborCache);
-//    std::cout << unsigned (solver->calculateHeuristic(*root)) << std::endl;
     if (SOLVE) {
         auto start = std::chrono::steady_clock::now();
         std::vector<Short> path = solver->solve(root);
         auto end = std::chrono::steady_clock::now();
+        root->printState();
+        std::cout << "Solution length: " << path.size() - 1 << std::endl;
         std::cout << "Time difference for solving = "
                   << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << "[s]"
                   << std::endl;
