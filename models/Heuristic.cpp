@@ -47,6 +47,16 @@ Int Heuristic::getRank(std::vector<Short>& dual) const {
     return getRankOfSelectedDuals(selectedDuals);
 }
 
+Int Heuristic::getRankWithBlank(std::vector<Short>& dual) const {
+    std::vector<Short> selectedDuals;
+    selectedDuals.reserve(tiles.size() + 1);
+    selectedDuals.push_back(dual[0]);
+    for (short tile: tiles) {
+        selectedDuals.push_back(dual[tile]);
+    }
+    return getRankOfSelectedDuals(selectedDuals);
+}
+
 Long Heuristic::getRankOfState(std::vector<Short>& dual) {
     Long rank = 0;
     rank |= dual[0];
@@ -83,6 +93,8 @@ void Heuristic::generatePDB() {
     queue.push(goalStateRank);
     visited.insert(goalStateRank);
     Int count = 1;
+    int creationPercentage = 1;
+    int onePercentSize = int(PDB.size() / 100);
     while (count < PDB.size()) {
         if (queue.empty()) {
             std::cout << "Queue is empty" << std::endl;
@@ -98,19 +110,23 @@ void Heuristic::generatePDB() {
         for (Short neighbor: neighborCache->getNeighbors(currentBlank)) {
             dual[state[neighbor]] = currentBlank;
             dual[0] = neighbor;
-            Long newRank = getRankOfState(dual);
-            if (visited.find(newRank) != visited.end()) {
+            Int visitedRank = getRankWithBlank(dual);
+            if (visited.find(visitedRank) != visited.end()) {
                 dual[state[neighbor]] = neighbor;
                 dual[0] = currentBlank;
                 continue;
             }
-            visited.insert(newRank);
-            queue.push(newRank);
+            visited.insert(visitedRank);
+            queue.push(getRankOfState(dual));
             if (state[neighbor] != 0) {
                 Int nextRank = getRank(dual);
                 if (PDB[nextRank] == 0 && nextRank != goalRank) {
                     PDB[nextRank] = currentH + 1;
                     ++count;
+                    if (count == creationPercentage * onePercentSize) {
+                        std::cout << "Generated " << creationPercentage << "% of PDB" << std::endl;
+                        ++creationPercentage;
+                    }
                 }
             }
             dual[state[neighbor]] = neighbor;

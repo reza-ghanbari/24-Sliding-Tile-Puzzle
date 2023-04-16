@@ -28,7 +28,7 @@ private:
     Int onesCountLookup[LARGEST_NUMBER];
     Int picks[PDB_STATE_SIZE];
     std::queue<Long> queue;
-    std::unordered_set<Long> visited;
+    std::unordered_set<Int> visited;
     Int pick(Short n, Short k);
     void InitializeRankingCalculationTables();
 public:
@@ -62,6 +62,8 @@ public:
     Long getRankOfState(std::vector<Short> &dual);
 
     State *getStateOfRank(Long rank);
+
+    Int getRankWithBlank(std::vector<Short> &dual) const;
 };
 
 
