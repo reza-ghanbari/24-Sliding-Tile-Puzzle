@@ -61,7 +61,8 @@ Short Solver::getHeuristicOfNormalTable(std::vector<Short> &dual) {
     return heuristicValue;
 }
 
-Short Solver::iterate(State *state, Int limit, Int gCost, Short previousBlank, std::vector<Short>& path) {
+Short Solver::iterate(State *state, Int limit, Short previousBlank, std::vector<Short>& path) {
+    Int gCost = path.size() - 1;
     this->expandedNodes++;
     int currentHCost = calculateHeuristic(*state);
     if (gCost + currentHCost > limit)
@@ -77,7 +78,7 @@ Short Solver::iterate(State *state, Int limit, Int gCost, Short previousBlank, s
         }
         path.push_back(neighbor);
         state->swap(neighbor);
-        auto result = iterate(state, limit, gCost + 1, currentBlank, path);
+        auto result = iterate(state, limit, currentBlank, path);
         if (result == 0) {
             return 0;
         }
@@ -96,7 +97,7 @@ std::vector<Short> Solver::solve(State* state) {
     Short limit = calculateHeuristic(*state);
     std::vector<Short> path = {state->getBlank()};
     while (true) {
-        Short result = iterate(state, limit, 0, state->getBlank(), path);
+        Short result = iterate(state, limit, state->getBlank(), path);
         std::cout << "limit: " << unsigned(limit) << ", expanded: " << this->expandedNodes << ", generated: " << this->generatedNodes << std::endl;
         if (result == 0) {
             return path;
