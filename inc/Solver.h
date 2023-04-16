@@ -39,7 +39,7 @@ public:
 
     Short getHeuristicOfReflectedTable(std::vector<Short>& dual);
 
-    Short iterate(State *state, Int limit, Short previousBlank, std::vector<Short> &path);
+    Short iterate(State *state, Short limit, Short previousBlank, std::vector<Short> &path);
 };
 
 

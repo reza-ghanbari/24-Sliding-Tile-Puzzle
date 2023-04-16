@@ -12,11 +12,11 @@ void NeighborCache::initNeighbors() {
         if (row > 0) {
             neighbors[index].push_back(index - SIZE);
         }
-        if (row < ZERO_BASED_SIZE) {
-            neighbors[index].push_back(index + SIZE);
-        }
         if (col > 0) {
             neighbors[index].push_back(index - 1);
+        }
+        if (row < ZERO_BASED_SIZE) {
+            neighbors[index].push_back(index + SIZE);
         }
         if (col < ZERO_BASED_SIZE) {
             neighbors[index].push_back(index + 1);

@@ -61,7 +61,7 @@ Short Solver::getHeuristicOfNormalTable(std::vector<Short> &dual) {
     return heuristicValue;
 }
 
-Short Solver::iterate(State *state, Int limit, Short previousBlank, std::vector<Short>& path) {
+Short Solver::iterate(State *state, Short limit, Short previousBlank, std::vector<Short>& path) {
     this->expandedNodes++;
     if (state->isGoal())
         return 0;
