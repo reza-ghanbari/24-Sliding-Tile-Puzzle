@@ -16,8 +16,8 @@ const Short MAX_INT = 255;
 const Int LARGEST_NUMBER = (1 << CAPACITY) - 1;
 
 // Configurations
-const Short READ_PDB = 1;
+const Short READ_PDB = 0;
 const Short WRITE_PDB = 0;
-const Short SOLVE = 1;
+const Short SOLVE = 0;
 
 #endif //CODE_CONSTANTS_H

@@ -107,10 +107,11 @@ std::vector<Short> Solver::solve(State* state) {
     std::vector<Short> path = {state->getBlank()};
     while (true) {
         Short result = iterate(state, limit, 0, state->getBlank(), path);
-        std::cout << "Limit: " << unsigned(limit) << ", expanded: " << this->expandedNodes << ", generated: " << this->generatedNodes << std::endl;
+        std::cout << "expanded: " << this->expandedNodes << ", generated: " << this->generatedNodes << std::endl;
         if (result == 0) {
             return path;
         }
+        std::cout << "new limit: " << unsigned(result) << std::endl;
         limit = result;
     }
 }

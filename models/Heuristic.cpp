@@ -2,11 +2,6 @@
 // Created by reza on 12/04/23.
 //
 
-#include <queue>
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <algorithm>
 #include "../inc/Heuristic.h"
 
 Int Heuristic::pick(Short n, Short k)
@@ -52,46 +47,79 @@ Int Heuristic::getRank(std::vector<Short>& dual) const {
     return getRankOfSelectedDuals(selectedDuals);
 }
 
+Long Heuristic::getRankOfState(std::vector<Short>& dual) {
+    Long rank = 0;
+    rank |= dual[0];
+    for (Short tile: tiles) {
+        rank <<= 5;
+        rank |= dual[tile];
+    }
+    return rank;
+}
+
+State* Heuristic::getStateOfRank(Long rank) {
+    std::vector<Short> dual(CAPACITY);
+    for (int i = tiles.size() - 1; i >= 0; --i) {
+        dual[tiles[i]] = rank & 31;
+        rank >>= 5;
+    }
+    dual[0] = rank & 31;
+    std::vector<Short> state(CAPACITY);
+    for (Short tile: tiles) {
+        state[dual[tile]] = tile;
+    }
+    return new State(state, dual, dual[0]);
+}
+
 void Heuristic::generatePDB() {
     PDB = std::vector<Short>(pick(CAPACITY, PDB_STATE_SIZE));
-    std::vector<Short> goalState;
-    goalState.reserve(CAPACITY);
-    for (int i = 0; i < CAPACITY; ++i) {
-        goalState.push_back((std::count(tiles.begin(), tiles.end(), i) > 0) ? i : 0);
-    }
+    std::vector<Short> goalState(CAPACITY);
+    for (Short tile: tiles)
+        goalState[tile] = tile;
     std::vector<Short> goalDual = goalState;
     Int goalRank = getRank(goalDual);
     PDB[goalRank] = 0;
-    auto* goal = new State(goalState, goalDual, 0);
-    std::queue<State*> queue;
-    queue.push(goal);
-    while (!queue.empty()) {
-        State* current = queue.front();
+    Long goalStateRank = getRankOfState(goalDual);
+    queue.push(goalStateRank);
+    visited.insert(goalStateRank);
+    Int count = 1;
+    while (count < PDB.size()) {
+        if (queue.empty()) {
+            std::cout << "Queue is empty" << std::endl;
+            break;
+        }
+        std::cout << "Queue Size: " << queue.size() << std::endl;
+        State* current = getStateOfRank(queue.front());
         queue.pop();
         std::vector<Short> state = std::move(current->getState());
         std::vector<Short> dual = std::move(current->getDual());
         Short currentH = PDB[getRank(dual)];
-        for (Short tileNumber : tiles) {
-            Short tile = dual[tileNumber];
-            for (Short neighbor: neighborCache->getNeighbors(tile)) {
-                if (state[neighbor] != 0) {
-                    continue;
-                }
-                dual[tileNumber] = neighbor;
+        Short currentBlank = current->getBlank();
+        std::cout << "Current Blank: " << unsigned (currentBlank) << std::endl;
+        for (Short neighbor: neighborCache->getNeighbors(currentBlank)) {
+            std::swap(dual[0], dual[state[neighbor]]);
+            Long newRank = getRankOfState(dual);
+            if (visited.find(newRank) != visited.end()) {
+                std::swap(dual[0], dual[state[neighbor]]);
+                continue;
+            }
+            visited.insert(newRank);
+            assert(newRank <= 1ULL<<35);
+            queue.push(newRank);
+            if (state[neighbor] != 0) {
                 Int nextRank = getRank(dual);
                 if (PDB[nextRank] == 0 && nextRank != goalRank) {
-                    auto newDual = dual;
-                    auto newState = state;
-                    std::swap(newState[tile], newState[neighbor]);
-                    auto* next = new State(newState, newDual);
                     PDB[nextRank] = currentH + 1;
-                    queue.push(next);
+                    ++count;
+                    std::cout << count << " " << visited.size() << std::endl;
                 }
-                dual[tileNumber] = tile;
             }
+            std::swap(dual[0], dual[state[neighbor]]);
         }
         delete current;
     }
+    visited.clear();
+    queue = {};
 }
 
 void Heuristic::saveToFile(const std::string& fileName) {
@@ -111,15 +139,9 @@ void Heuristic::readFromFile(const std::string& filename) {
         return;
     }
     unsigned int num;
-//    std::vector<Int> distribution(36);
     while (file >> num) {
         PDB.push_back(num);
-//        distribution[num]++;
     }
-//    for (int i = 0; i < 36; ++i) {
-//        std::cout << unsigned (i) << ": " << unsigned (distribution[i]) << std::endl;
-//    }
-//    std::cout << "Total: " << PDB.size() << std::endl;
     file.close();
 }
 

@@ -9,6 +9,13 @@
 #include <vector>
 #include <unordered_map>
 #include <bitset>
+#include <queue>
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <algorithm>
+#include <unordered_set>
+#include <cassert>
 #include "Types.h"
 #include "State.h"
 #include "Constants.h"
@@ -20,6 +27,8 @@ private:
     NeighborCache *neighborCache;
     Int onesCountLookup[LARGEST_NUMBER];
     Int picks[PDB_STATE_SIZE];
+    std::queue<Long> queue;
+    std::unordered_set<Long> visited;
     Int pick(Short n, Short k);
     void InitializeRankingCalculationTables();
 public:
@@ -49,6 +58,10 @@ public:
     Short getHeuristicOfSelectedDuals(std::vector<Short> &dual);
 
     Short getHeuristic(std::vector<Short> &dual);
+
+    Long getRankOfState(std::vector<Short> &dual);
+
+    State *getStateOfRank(Long rank);
 };
 
 
