@@ -7,11 +7,8 @@
 #include "../inc/State.h"
 
 void State::swap(Short to) {
-    Short from = this->blank;
-    this->dual[this->state[to]] = from;
-//    TODO: remove the next line as it is unnecessary
-    this->dual[BLANK] = to;
-    std::swap(this->state[to], this->state[from]);
+    std::swap(state[to], state[blank]);
+    std::swap(dual[state[to]], dual[BLANK]);
     this->blank = to;
 }
 
@@ -28,7 +25,10 @@ void State::printState() const {
     std::cout << "State:" << std::endl;
     for (Short i = 0; i < SIZE; i++) {
         for (Short j = 0; j < SIZE; j++) {
-            std::cout << std::setw(2) << unsigned(this->state[i * SIZE + j]) << " ";
+            if ((i * SIZE + j) == blank)
+                std::cout << " * ";
+            else
+                std::cout << std::setw(2) << unsigned(this->state[i * SIZE + j]) << " ";
         }
         std::cout << std::endl;
     }
