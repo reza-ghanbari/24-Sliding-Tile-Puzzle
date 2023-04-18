@@ -68,10 +68,10 @@ Short Solver::iterate(State *state, Short limit, Short previousBlank, std::vecto
     Short min = MAX_INT;
     Short currentBlank = state->getBlank();
     for (auto neighbor: neighborCache->getNeighbors(currentBlank)) {
-        this->generatedNodes++;
         if (neighbor == previousBlank) {
             continue;
         }
+        this->generatedNodes++;
         path.push_back(neighbor);
         state->swap(neighbor);
         Short childFCost = calculateHeuristic(*state) + path.size() - 1;

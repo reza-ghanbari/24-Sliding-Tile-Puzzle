@@ -75,7 +75,6 @@ int main() {
             auto start = std::chrono::steady_clock::now();
             std::vector<Short> path = solver->solve(root);
             auto end = std::chrono::steady_clock::now();
-            root->printState();
             std::cout << "Solution length: " << path.size() - 1 << std::endl;
             std::cout << "Time difference for solving = "
                       << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0 << "[s]"
