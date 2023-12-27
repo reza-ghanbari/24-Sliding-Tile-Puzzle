@@ -9,6 +9,15 @@
 
 const Short BLANK = 0;
 const Short SIZE = 5;
+const Short ZERO_BASED_SIZE = SIZE - 1;
 const Short CAPACITY = 25;
+const Short PDB_STATE_SIZE = 6;
+const Short MAX_INT = 255;
+const Int LARGEST_NUMBER = (1 << CAPACITY) - 1;
+
+// Configurations
+const Short READ_PDB = 1;
+const Short WRITE_PDB = 0;
+const Short SOLVE = 1;
 
 #endif //CODE_CONSTANTS_H

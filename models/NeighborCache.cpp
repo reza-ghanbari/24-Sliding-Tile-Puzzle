@@ -6,20 +6,20 @@
 
 void NeighborCache::initNeighbors() {
     neighbors = std::vector<std::vector<Short>>(CAPACITY);
-    for (int blankIdx = 0; blankIdx < CAPACITY; ++blankIdx) {
-        Short row = blankIdx / SIZE;
-        Short col = blankIdx % SIZE;
+    for (int index = 0; index < CAPACITY; ++index) {
+        Short row = index / SIZE;
+        Short col = index % SIZE;
         if (row > 0) {
-            neighbors[blankIdx].push_back(blankIdx - SIZE);
-        }
-        if (row < SIZE - 1) {
-            neighbors[blankIdx].push_back(blankIdx + SIZE);
+            neighbors[index].push_back(index - SIZE);
         }
         if (col > 0) {
-            neighbors[blankIdx].push_back(blankIdx - 1);
+            neighbors[index].push_back(index - 1);
         }
-        if (col < SIZE - 1) {
-            neighbors[blankIdx].push_back(blankIdx + 1);
+        if (row < ZERO_BASED_SIZE) {
+            neighbors[index].push_back(index + SIZE);
+        }
+        if (col < ZERO_BASED_SIZE) {
+            neighbors[index].push_back(index + 1);
         }
     }
 }
